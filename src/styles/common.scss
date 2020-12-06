@@ -4,3 +4,7 @@
   align-items: center;
   justify-content: space-between;
 }
+
+.my-scrollbar .el-scrollbar__wrap{
+  overflow-x: auto;
+}

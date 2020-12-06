@@ -23,3 +23,19 @@ export function getMemberList(data) {
     params: data
   });
 }
+
+export function operateMoney(data) {
+  return axiosIns({
+    url: `/member/operateMoney`,
+    method: 'post',
+    data
+  });
+}
+
+export function getConsumeRecord(data) {
+  return axiosIns({
+    url: `/member/getConsumeRecord`,
+    method: 'get',
+    params: data
+  });
+}

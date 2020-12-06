@@ -43,13 +43,26 @@
     <kh-dialog :title=" isNewMember ? '新增会员' : '编辑会员'" :visible.sync="visibleDialog" width="500px">
       <add-member :memberInfo="memberInfo" @confirmCallback="confirmCallback" @cancelCallback="visibleDialog = false"></add-member>
     </kh-dialog>
+    <kh-dialog title="充值/消费金额" :visible.sync="visibleDialogMoney" width="500px">
+      <operate-money :memberInfo="memberInfo" @confirmCallback="confirmCallbackMoney" @cancelCallback="visibleDialogMoney = false"></operate-money>
+    </kh-dialog>
+    <slide-dialog-full title="缴费记录" width="400px" :visible.sync="visibleSlideDialog">
+      <consume-record :memberInfo="memberInfo"></consume-record>
+    </slide-dialog-full>
   </div>
 </template>
 
 <script>
   import addMember from './components/addMember.vue';
+  import operateMoney from './components/operateMoney.vue';
+  import consumeRecord from './components/consumeRecord.vue';
   import { getMemberList } from '@/api/member.js';
   export default {
+    components: {
+      addMember,
+      operateMoney,
+      consumeRecord
+    },
     data() {
       return {
         tableData: [],
@@ -63,11 +76,10 @@
         pageTotal: 0,
         visibleDialog: false,
         isNewMember: true,
-        memberInfo: {}
+        memberInfo: {},
+        visibleDialogMoney: false,
+        visibleSlideDialog: false
       };
-    },
-    components: {
-      addMember
     },
     created() {
       this._getMemberList();
@@ -75,6 +87,7 @@
     methods: {
       addMember() {
         this.isNewMember = true;
+        this.memberInfo = {};
         this.visibleDialog = true;
       },
       editMember(row) {
@@ -115,14 +128,20 @@
         this.currentPage = 1;
         this._getMemberList();
       },
-      operateMoney() {
-
+      operateMoney(row) {
+        this.memberInfo = row;
+        this.visibleDialogMoney = true;
       },
-      consumeRecord() {
-
+      consumeRecord(row) {
+        this.memberInfo = row;
+        this.visibleSlideDialog = true;
       },
       confirmCallback() {
         this.visibleDialog = false;
+        this.resetCurrentPage();
+      },
+      confirmCallbackMoney() {
+        this.visibleDialogMoney = false;
         this.resetCurrentPage();
       }
     }

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Loading } from 'element-ui';
 const axiosIns = axios.create({});
 
-axiosIns.defaults.baseURL = 'http://192.168.0.108:3000';
+axiosIns.defaults.baseURL = 'http://localhost:3000';
 
 let loadings = null;
 // const XAuthorization = 'X-Authorization';

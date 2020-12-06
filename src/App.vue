@@ -20,6 +20,7 @@
   body{
     padding: 0;margin: 0;background-color: #F0F2F5;
   }
+  ul{padding: 0;margin: 0;}
   div, p, li, span {
     font-size: 14px;
   }
