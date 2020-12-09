@@ -10,7 +10,7 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="resetCurrentPage">搜索</el-button>
-          <el-button>导出</el-button>
+          <el-button @click="handleDownload">导出</el-button>
         </el-form-item>
       </el-form>
       <el-button class="add" type="primary" icon="el-icon-plus" @click="addMember">新增会员</el-button>
@@ -35,8 +35,10 @@
     <el-pagination background
       :current-page="currentPage"
       :page-size="pageSize" 
+      :page-sizes="[10, 20, 100, 5000, 10000]"
       :total="pageTotal" 
-      layout="prev, pager, next"
+      layout="sizes, prev, pager, next"
+      @size-change="handleSizeChange"
       @current-change="changePage">
     </el-pagination>
 
@@ -85,6 +87,28 @@
       this._getMemberList();
     },
     methods: {
+      handleDownload() {
+        this.$showLoading();
+        import('@/vendor/Export2Excel').then(excel => {
+          const tHeader = ['名称', '手机号', '性别', '余额', '最近一次消费时间', '最近一次消费内容'];
+          const filterVal = ['name', 'phone', 'sex', 'amount', 'lastConsumeTime', 'lastConsumeContent'];
+          const data = this.formatJson(filterVal);
+          excel.export_json_to_excel({
+            header: tHeader,
+            data,
+            filename: '导出数据'
+          });
+          this.$hideLoading();
+        });
+      },
+      formatJson(filterVal) {
+        return this.tableData.map(v => {
+          const arr = filterVal.map(j => {
+            return v[j];
+          });
+          return arr;
+        });
+      },
       addMember() {
         this.isNewMember = true;
         this.memberInfo = {};
@@ -119,6 +143,10 @@
         }).finally(() => {
           this.vloading = false;
         });
+      },
+      handleSizeChange(val) {
+        this.pageSize = val;
+        this._getMemberList();
       },
       changePage(v) {
         this.currentPage = v;
