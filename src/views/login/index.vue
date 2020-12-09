@@ -2,15 +2,15 @@
   <div class="login_page">
     <div class="login_cont">
       <el-form ref="form" :model="form" label-width="80px">
-        <el-form-item label="手机/邮箱" class="w350">
-          <el-input v-model="form.account"></el-input>
+        <el-form-item label="账号" class="w350">
+          <el-input v-model="form.account" placeholder="请输入账号"></el-input>
         </el-form-item>
         <el-form-item label="密码" class="w350">
           <el-input placeholder="请输入密码" v-model="form.pwd" show-password></el-input>
         </el-form-item>
         <div class="yzm">
-          <el-form-item label="验证吗" class="w350">
-            <el-input v-model="form.yzm"></el-input>
+          <el-form-item label="验证码" class="w350">
+            <el-input v-model="form.yzm" placeholder="请输入验证码"></el-input>
           </el-form-item>
           <div class="yzm-svg" v-html="svg" @click="_getCaptcha"></div>
         </div>
@@ -42,7 +42,7 @@
     computed: {
     },
     created() {
-      // this._getCaptcha();
+      this._getCaptcha();
     },
     methods: {
       handleTabClick(tab, event) {

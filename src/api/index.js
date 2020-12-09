@@ -6,3 +6,11 @@ export function getCaptcha() {
     method: 'get'
   });
 }
+
+export function register(data) {
+  return axiosIns({
+    url: `/register`,
+    method: 'post',
+    data
+  });
+}
