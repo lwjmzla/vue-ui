@@ -1,11 +1,11 @@
 <template>
   <div class="wrap">
     <div class="form-wrap">
-      <el-form label-width="100px" :model="form">
-        <el-form-item label="会员名称">
+      <el-form label-width="100px" :model="form" :rules="rules">
+        <el-form-item label="会员名称" prop="name">
           <el-input v-model="form.name" placeholder="会员名称"></el-input>
         </el-form-item>
-        <el-form-item label="手机号码">
+        <el-form-item label="手机号码" prop="phone">
           <el-input v-model="form.phone" placeholder="手机号码"></el-input>
         </el-form-item>
         <el-form-item label="性别">
@@ -33,6 +33,7 @@
 
 <script>
   import { addMember, updateMember } from '@/api/member.js';
+  import { isDecimalForN } from '@/utils/validate.js';
   export default {
     props: {
       memberInfo: {
@@ -43,13 +44,21 @@
     data() {
       return {
         form: {
-          name: 'lwj',
-          phone: '1353512588',
-          sex: '男',
+          name: '',
+          phone: '',
+          sex: '',
           amount: '',
           remark: ''
         },
-        sexOptions: ['男', '女']
+        sexOptions: ['男', '女'],
+        rules: {
+          name: [
+            { required: true, message: '请输入会员名称', trigger: 'blur' }
+          ],
+          phone: [
+            { required: true, message: '请输入手机号码', trigger: 'blur' }
+          ]
+        }
       };
     },
     computed: {
@@ -73,8 +82,20 @@
         // this.form.name = this.form.name + '1';
         // this.form.phone = this.form.phone + '2';
         let ajaxFn = this.isNewMember ? addMember : updateMember;
-        this.$showLoading();
         let params = this.form;
+        if (!params.name) {
+          this.$message.warning('请输入会员名称');
+          return;
+        }
+        if (!params.phone) {
+          this.$message.warning('请输入手机号码');
+          return;
+        }
+        if (params.amount && !isDecimalForN(params.amount)) { // !最多2位小数的正数
+          this.$message.warning('请输入最多2位小数的正数');
+          return;
+        }
+        this.$showLoading();
         ajaxFn(params).then((res) => {
           console.log(res);
           if (res.success) {

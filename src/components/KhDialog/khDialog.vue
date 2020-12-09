@@ -49,7 +49,7 @@
 </script>
 <style lang='scss' scoped>
 .el-dialog__wrapper{
-    z-index: 2001;
+    z-index: 2000;
     display: flex;
     align-items: center;
     justify-content: center;

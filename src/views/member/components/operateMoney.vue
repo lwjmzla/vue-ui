@@ -1,8 +1,8 @@
 <template>
   <div class="wrap">
     <div class="form-wrap">
-      <el-form label-width="120px" :model="form">
-        <el-form-item label="充值/消费金额">
+      <el-form ref="ruleForm" label-width="120px" :model="form" :rules="rules">
+        <el-form-item label="充值/消费金额" prop="amount">
           <el-input v-model="form.amount" placeholder="充值/消费金额"></el-input>
         </el-form-item>
         <el-form-item label="备注">
@@ -21,6 +21,7 @@
 
 <script>
   import { operateMoney } from '@/api/member.js';
+  import { isNumber } from '@/utils/validate.js';
   export default {
     props: {
       memberInfo: {
@@ -33,6 +34,31 @@
         form: {
           amount: '',
           remark: ''
+        },
+        rules: {
+          amount: [
+            { required: true, message: '值不能为空', trigger: 'blur' },
+            { validator: (rule, value, callback) => {
+                // !需要限制2位小数
+                if (isNumber(value)) {
+                  // callback();
+                  if (value.includes('.')) {
+                    let reg = /.+\./;
+                    let matchVal = value.replace(reg, '');
+                    if (matchVal.length > 2) {
+                      callback(new Error('最多只能输入2位小数'));
+                    } else {
+                      callback();
+                    }
+                  } else {
+                    callback();
+                  }
+                } else {
+                  callback(new Error('请输入正确的数字'));
+                }
+              },
+              trigger: 'blur' }
+          ] 
         }
       };
     },
@@ -42,33 +68,48 @@
     },
     methods: {
       submit() {
-        let amount = parseFloat(this.form.amount);
-        let operateType = amount > 0 ? 'plus' : 'minus';
-        let operateAmount = Math.abs(amount);
-        let amountAfterOperate = this.memberInfo.amount + amount;
-        let remark = this.form.remark;
-        let memberCode = this.memberInfo.memberCode;
+        this.$refs.ruleForm.validateField('amount', (err) => {
+          console.log(err); // 有错误 就有值,没错误的话为空
+          if (!err) {
+            let amount = parseFloat(this.form.amount);
+            let operateType = amount > 0 ? 'plus' : 'minus';
+            let operateAmount = Math.abs(amount);
+            let amountAfterOperate = this.memberInfo.amount + amount;
+            amountAfterOperate = amountAfterOperate + '';
+            if (amountAfterOperate.includes('.')) {
+              let reg = /.+\./;
+              let matchVal = amountAfterOperate.replace(reg, '');
+              if (matchVal.length > 2) {
+                matchVal = matchVal.substr(0, 2);
+              }
+              amountAfterOperate = parseInt(amountAfterOperate) + '.' + matchVal;
+            }
+            let remark = this.form.remark;
+            let memberCode = this.memberInfo.memberCode;
 
-        this.$showLoading();
-        let params = {
-          memberCode,
-          operateType,
-          remark,
-          operateAmount,
-          amountAfterOperate
-        };
-        operateMoney(params).then((res) => {
-          console.log(res);
-          if (res.success) {
-            this.$message.success(res.message);
-            this.$emit('confirmCallback');
-          } else {
-            this.$message.error(res.message);
+            let params = {
+              memberCode,
+              operateType,
+              remark,
+              operateAmount,
+              amountAfterOperate
+            };
+            console.log(params);
+            this.$showLoading();
+            operateMoney(params).then((res) => {
+              console.log(res);
+              if (res.success) {
+                this.$message.success(res.message);
+                this.$emit('confirmCallback');
+              } else {
+                this.$message.error(res.message);
+              }
+            }).catch((err) => {
+              console.log(err);
+            }).finally(() => {
+              this.$hideLoading();
+            });
           }
-        }).catch((err) => {
-          console.log(err);
-        }).finally(() => {
-          this.$hideLoading();
         });
       },
       cancel() {

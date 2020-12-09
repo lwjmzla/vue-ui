@@ -82,7 +82,7 @@
     .wrap{
         position: fixed;
         background: rgba(0,0,0,0.7);
-        z-index: 4000;
+        z-index: 2000;
         top: 0;
         left: 0;
         right: 0;
