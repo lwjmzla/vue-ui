@@ -55,4 +55,19 @@ const router = new VueRouter({
   routes
 });
 
+router.beforeEach((to, from, next) => {
+  Vue.prototype.routerfrom = from;
+  Vue.prototype.routerto = to;
+  let token = sessionStorage.getItem('jwtToken');
+  if (to.path === '/login') {
+    next();
+  } else {
+    if (token) {
+      next();
+    } else {
+      next({ path: '/login' });
+    }
+  }
+});
+
 export default router;

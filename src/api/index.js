@@ -14,3 +14,11 @@ export function register(data) {
     data
   });
 }
+
+export function login(data) {
+  return axiosIns({
+    url: `/login`,
+    method: 'post',
+    data
+  });
+}

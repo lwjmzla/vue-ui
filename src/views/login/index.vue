@@ -10,7 +10,7 @@
         </el-form-item>
         <div class="yzm">
           <el-form-item label="验证码" class="w350">
-            <el-input v-model="form.yzm" placeholder="请输入验证码"></el-input>
+            <el-input v-model="form.yzm" placeholder="请输入验证码" @keyup.enter.native="login"></el-input>
           </el-form-item>
           <div class="yzm-svg" v-html="svg" @click="_getCaptcha"></div>
         </div>
@@ -23,7 +23,7 @@
   </div>
 </template>
 <script>
-  import { getCaptcha } from '@/api/index.js';
+  import { getCaptcha, login } from '@/api/index.js';
   export default {
     name: 'Login',
 
@@ -31,9 +31,10 @@
       return {
         activeName: 'login',
         form: {
-          account: '',
-          pwd: '',
-          yzm: ''
+          account: '13535123588',
+          pwd: '123456',
+          yzm: '',
+          identify: ''
         },
         svg: ''
       };
@@ -52,14 +53,32 @@
         }
       },
       login() {
-        console.log('submit!');
+        let params = this.form;
+        this.$showLoading();
+        login(params).then((res) => {
+          console.log(res);
+          if (res.success) {
+            // this.$message.success(res.message);
+            // this.$router.push('/login');
+            sessionStorage.setItem('jwtToken', res.content.jwtToken);
+            this.$router.push('/member');
+          } else {
+            this.$message.error(res.message);
+            this._getCaptcha();
+          }
+        }).catch((err) => {
+          console.log(err);
+        }).finally(() => {
+          this.$hideLoading();
+        });
       },
       _getCaptcha() {
         this.$showLoading();
         let params = {};
         getCaptcha(params).then((res) => {
-          if (res.code === 200) {
-            this.svg = res.data;
+          if (res.success) {
+            this.svg = res.content.svg;
+            this.form.identify = res.content.identify;
           } else {
             this.$message.error(res.message);
           }
