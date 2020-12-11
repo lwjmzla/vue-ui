@@ -59,6 +59,7 @@
   import operateMoney from './components/operateMoney.vue';
   import consumeRecord from './components/consumeRecord.vue';
   import { getMemberList } from '@/api/member.js';
+  import dayjs from 'dayjs';
   export default {
     components: {
       addMember,
@@ -87,6 +88,9 @@
       this._getMemberList();
     },
     methods: {
+      formatTime(val) {
+        return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
+      },
       handleDownload() {
         this.$showLoading();
         import('@/vendor/Export2Excel').then(excel => {
@@ -133,7 +137,10 @@
             arr.forEach((item) => {
               item.amount = item.amount || 0;
             });
-            this.tableData = arr;
+            this.tableData = arr.map((item) => {
+              item.lastConsumeTime = this.formatTime(item.lastConsumeTime);
+              return item;
+            });
             this.pageTotal = res.content.total;
           } else {
             this.$message.error(res.message);

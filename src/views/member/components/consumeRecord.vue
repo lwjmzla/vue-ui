@@ -6,7 +6,7 @@
         <ul>
           <li :class="item.operateType" v-for="(item,index) in recordArr" :key="index">
             <span class="remark">{{ item.remark }}</span>
-            <span class="date">{{ item.createTime }}</span>
+            <span class="date">{{ formatTime(item.createTime) }}</span>
             <span class="consume">{{ item.operateType === 'plus' ? '+' : '-' }} {{ item.operateAmount }}</span>
           </li>
         </ul>
@@ -18,7 +18,7 @@
 <script>
   import { getConsumeRecord } from '@/api/member.js';
   // import { getFullDate, isToday, isYesterday, getTime } from '@/utils/date';
-  // import dayjs from 'dayjs';
+  import dayjs from 'dayjs';
   export default {
     props: {
       memberInfo: {
@@ -36,6 +36,9 @@
       this._getConsumeRecord();
     },
     methods: {
+      formatTime(val) {
+        return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
+      },
       _getConsumeRecord() {
         this.vloading = true;
         let params = {

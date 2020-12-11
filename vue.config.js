@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: '/', // !设置 process.env.BASE_URL的值
+  publicPath: '/badminton', // !设置 process.env.BASE_URL的值
   configureWebpack: {
     devtool: 'source-map'
   },

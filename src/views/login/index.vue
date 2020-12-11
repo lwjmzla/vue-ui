@@ -86,7 +86,6 @@
         });
       },
       _getCaptcha() {
-        this.$showLoading();
         let params = {};
         getCaptcha(params).then((res) => {
           if (res.success) {
@@ -98,7 +97,6 @@
         }).catch((err) => {
           console.log(err);
         }).finally(() => {
-          this.$hideLoading();
         });
       }
     }
