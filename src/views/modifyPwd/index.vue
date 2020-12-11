@@ -12,14 +12,14 @@
           <el-input v-model="form.authCode" placeholder="授权码请联系管理索取"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="btn" type="primary" @click="register">注册</el-button>
+          <el-button class="btn" type="primary" @click="modifyPwd">修改密码</el-button>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
 <script>
-  import { register } from '@/api/index.js';
+  import { modifyPwd } from '@/api/index.js';
   export default {
     name: 'Register',
     data() {
@@ -37,7 +37,7 @@
     created() {
     },
     methods: {
-      register() {
+      modifyPwd() {
         let params = this.form;
         if (!params.account) {
           this.$message.warning('请输入账号');
@@ -52,7 +52,7 @@
           return;
         }
         this.$showLoading();
-        register(params).then((res) => {
+        modifyPwd(params).then((res) => {
           console.log(res);
           if (res.success) {
             this.$message.success(res.message);

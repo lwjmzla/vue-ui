@@ -15,6 +15,14 @@ export function register(data) {
   });
 }
 
+export function modifyPwd(data) {
+  return axiosIns({
+    url: `/modifyPwd`,
+    method: 'post',
+    data
+  });
+}
+
 export function login(data) {
   return axiosIns({
     url: `/login`,

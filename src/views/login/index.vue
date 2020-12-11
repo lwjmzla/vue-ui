@@ -16,7 +16,7 @@
         </div>
         <el-form-item>
           <el-button type="primary" @click="login">立即登录</el-button>
-          <span class="forget">忘记密码？</span>
+          <span class="forget" @click="forget">忘记密码？</span>
         </el-form-item>
       </el-form>
     </div>
@@ -46,6 +46,9 @@
       this._getCaptcha();
     },
     methods: {
+      forget() {
+        this.$router.push('/modifyPwd');
+      },
       handleTabClick(tab, event) {
         console.log(tab);
         if (tab.name === 'register') {
@@ -54,12 +57,22 @@
       },
       login() {
         let params = this.form;
+        if (!params.account) {
+          this.$message.warning('请输入账号');
+          return;
+        }
+        if (!params.pwd) {
+          this.$message.warning('请输入密码');
+          return;
+        }
+        if (!params.yzm) {
+          this.$message.warning('请输入验证码');
+          return;
+        }
         this.$showLoading();
         login(params).then((res) => {
           console.log(res);
           if (res.success) {
-            // this.$message.success(res.message);
-            // this.$router.push('/login');
             sessionStorage.setItem('jwtToken', res.content.jwtToken);
             this.$router.push('/member');
           } else {
@@ -119,7 +132,10 @@
     width: 350px;
   }
   .forget{
-    color: $color-primary;margin-left: 10px;
+    color: $color-primary;margin-left: 10px;cursor: pointer;
+    &:hover{
+      text-decoration: underline;
+    }
   }
   .yzm{
     margin-bottom: 22px;

@@ -2,7 +2,14 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Login from '../views/login/index.vue';
 import Register from '../views/register/index.vue';
-import Forget from '../views/forget/index.vue';
+import modifyPwd from '../views/modifyPwd/index.vue';
+
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css'; // 这个样式必须引入
+
+// 简单配置
+NProgress.inc(0.2);
+NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
 
 Vue.use(VueRouter);
 
@@ -18,9 +25,9 @@ const routes = [
     component: Register
   },
   {
-    path: '/forget',
-    name: 'Forget',
-    component: Forget
+    path: '/modifyPwd',
+    name: 'modifyPwd',
+    component: modifyPwd
   },
   {
     path: '/',
@@ -54,12 +61,13 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-
+let whiteList = ['/register', '/login', '/modifyPwd'];
 router.beforeEach((to, from, next) => {
   Vue.prototype.routerfrom = from;
   Vue.prototype.routerto = to;
+  NProgress.start();
   let token = sessionStorage.getItem('jwtToken');
-  if (to.path === '/login') {
+  if (whiteList.includes(to.path)) {
     next();
   } else {
     if (token) {
@@ -68,6 +76,9 @@ router.beforeEach((to, from, next) => {
       next({ path: '/login' });
     }
   }
+});
+router.afterEach(() => {
+  NProgress.done();
 });
 
 export default router;

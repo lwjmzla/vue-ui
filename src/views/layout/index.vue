@@ -18,10 +18,10 @@
                 <span>退出</span>
               </div>
               <el-dropdown-menu slot="dropdown">
-                <router-link to="/system-bench/account/modifyPassword">
+                <router-link to="/modifyPwd">
                   <el-dropdown-item>修改密码</el-dropdown-item>
                 </router-link>
-                <el-dropdown-item @click.native="SignOut">注销</el-dropdown-item>
+                <el-dropdown-item @click.native="signOut">注销</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -84,6 +84,11 @@
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      signOut() {
+        localStorage.clear();
+        sessionStorage.clear();
+        this.$router.push('/login');
       }
     }
   };
