@@ -3,16 +3,43 @@ let isProd = process.env.NODE_ENV === 'production';
 let publicPath = '/badminton';
 let configObj = {
   publicPath: publicPath, // !设置 process.env.BASE_URL的值
-  configureWebpack: {
-    devtool: process.env.NODE_ENV === 'development' ? 'source-map' : 'cheap-source-map'
-  },
-  // devServer: { // !关闭eslint
-  //   overlay: {
-  //     warnings: false,
-  //     errors: false
-  //   },
-  //   lintOnSave: false
+  // configureWebpack: {
+  //   devtool: process.env.NODE_ENV === 'development' ? 'source-map' : 'cheap-source-map'
   // },
+  configureWebpack: config => {
+    if (isProd) {
+      // 生产环境
+      // config.plugins.push(
+      //   new CompressionWebpackPlugin({
+      //     asset: '[path].gz[query]',
+      //     algorithm: 'gzip',
+      //     test: productionGzipExtensions,
+      //     threshold: 10240, // 10240  = 10kb
+      //     minRatio: 0.8
+      //   })
+      // );
+      config.devtool = 'cheap-source-map';
+      config.module.rules.push({
+        test: /\.(js|css|vue)$/,
+        loader: 'webpack-replace-loader',
+        options: {
+          arr: [
+            { search: '/img', replace: `${publicPath}/img`, attr: 'g' }
+          ]
+        }
+      });
+    } else {
+      // 开发环境
+      config.devtool = 'source-map';
+    }
+  },
+  lintOnSave: false, // !关闭webpack的eslint提示
+  devServer: {
+    overlay: { // !关闭webpack的eslint提示
+      warnings: false,
+      errors: false
+    }
+  },
   css: {
     loaderOptions: {
       scss: {
@@ -22,33 +49,9 @@ let configObj = {
     }
   },
   chainWebpack: (config) => {
-    // todo如果webpack-replace-loader或者string-replace-loader 用不了，注意打包的时候需要手动给全局/img 替换为/badminton/img
-    // if (isProd) {
-    // config.module
-    //   .rule('replace')
-    //   .use('webpack-replace-loader')
-    //   .loader('webpack-replace-loader')
-    //   .tap(options => {
-    //     options = {
-    //       arr: [
-    //         { search: '/img', replace: `${publicPath}/img`, attr: 'g' }
-    //       ]
-    //     };
-    //     return options;
-    //   });
     // !在vue-cli  chainWebpack  就各种bug 好奇葩
     // !https://cli.vuejs.org/zh/guide/webpack.html#替换一个规则里的-loader
     // !https://www.jianshu.com/p/3529d2d1e2f9/    vue-cli-service inspect  'image-webpack-loader' https://segmentfault.com/q/1010000016724383
-    // config.module
-    //   .rule('replace')
-    //   .use('string-replace-loader')
-    //   .loader('string-replace-loader')
-    //   .options({
-    //     search: '/img',
-    //     replace: `${publicPath}/img`,
-    //     flags: 'g'
-    //   });
   }
-  // }
 };
 module.exports = configObj;
