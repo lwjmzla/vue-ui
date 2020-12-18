@@ -44,6 +44,7 @@
     },
     created() {
       this._getCaptcha();
+      console.log(process.env.VUE_APP_BASE_API);
     },
     methods: {
       forget() {

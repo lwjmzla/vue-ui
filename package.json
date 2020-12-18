@@ -17,6 +17,7 @@
     "vue": "^2.6.12",
     "vue-router": "^3.4.7",
     "vuex": "^3.5.1",
+    "webpack-bundle-analyzer": "^4.3.0",
     "xlsx": "^0.16.9"
   },
   "devDependencies": {

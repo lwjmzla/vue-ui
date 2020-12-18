@@ -93,6 +93,7 @@
       },
       handleDownload() {
         this.$showLoading();
+        // !异步引入，可以哦，点击按钮才加载
         import('@/vendor/Export2Excel').then(excel => {
           const tHeader = ['名称', '手机号', '性别', '余额', '最近一次消费时间', '最近一次消费内容'];
           const filterVal = ['name', 'phone', 'sex', 'amount', 'lastConsumeTime', 'lastConsumeContent'];
