@@ -59,6 +59,13 @@ let configObj = {
           .end();
       }
     }
+    config
+      .plugin('html')
+      .tap(args => {
+        console.log(args);
+        args[0].title = 'test';
+        return args;
+      });
     // !在vue-cli  chainWebpack  就各种bug 好奇葩
     // !https://cli.vuejs.org/zh/guide/webpack.html#替换一个规则里的-loader
     // !https://www.jianshu.com/p/3529d2d1e2f9/    vue-cli-service inspect  'image-webpack-loader' https://segmentfault.com/q/1010000016724383
