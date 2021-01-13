@@ -30,6 +30,11 @@ const routes = [
     component: modifyPwd
   },
   {
+    path: '/idcard',
+    name: 'idcard',
+    component: () => import('@/views/demo/idcard')
+  },
+  {
     path: '/',
     name: '首页',
     component: () => import('@/views/layout'),
@@ -61,7 +66,7 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-let whiteList = ['/register', '/login', '/modifyPwd'];
+let whiteList = ['/register', '/login', '/modifyPwd', '/idcard'];
 router.beforeEach((to, from, next) => {
   Vue.prototype.routerfrom = from;
   Vue.prototype.routerto = to;
