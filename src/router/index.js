@@ -35,6 +35,11 @@ const routes = [
     component: () => import('@/views/demo/idcard')
   },
   {
+    path: '/test',
+    name: 'test',
+    component: () => import('@/views/demo/test')
+  },
+  {
     path: '/',
     name: '首页',
     component: () => import('@/views/layout'),
@@ -47,7 +52,7 @@ const routes = [
       {
         path: 'member',
         name: 'Member',
-        component: () => import(/* webpackChunkName: "member" */ '@/views/member/index.vue')
+        component: () => import(/* webpackChunkName: "member", webpackPrefetch: true */ '@/views/member/index.vue')
       }
     ]
   }

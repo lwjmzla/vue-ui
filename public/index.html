@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title><%= htmlWebpackPlugin.options.title %></title>
+    <% if (process.env.NODE_ENV !== 'development') { %>
+      <% for(var css of htmlWebpackPlugin.options.cdn.css) { %>
+        <link href="<%=css%>" rel="preload" as="style" />
+        <link rel="stylesheet" href="<%=css%>" as="style" />
+      <% } %>
+      <% for(var js of htmlWebpackPlugin.options.cdn.js) { %>
+        <link href="<%=js%>" rel="preload" as="script" />
+        <script type="text/javascript" src="<%=js%>"></script>
+      <% } %>
+    <% } %>
   </head>
   <body>
     <noscript>
@@ -13,5 +23,52 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script>
+      /*
+        DNS 解析耗时: domainLookupEnd - domainLookupStart
+        TCP 连接耗时: connectEnd - connectStart
+        SSL 安全连接耗时: connectEnd - secureConnectionStart
+        网络请求耗时 (TTFB): responseStart - requestStart
+        数据传输耗时: responseEnd - responseStart
+        DOM 解析耗时: domInteractive - responseEnd
+        资源加载耗时: loadEventStart - domContentLoadedEventEnd
+        First Byte时间: responseStart - domainLookupStart
+        白屏时间: responseEnd - fetchStart
+        首次可交互时间: domInteractive - fetchStart
+        DOM Ready 时间: domContentLoadEventEnd - fetchStart
+        页面完全加载时间: loadEventStart - fetchStart
+        http 头部大小： transferSize - encodedBodySize
+        重定向次数：performance.navigation.redirectCount
+        重定向耗时: redirectEnd - redirectStart
+      */
+      window.addEventListener('load',(ev) => {
+        let timing = performance.getEntriesByType('navigation')[0]
+        let tti = timing.domInteractive - timing.fetchStart
+        console.log('TTI: ' + tti)
+      })
+
+      let observer = new PerformanceObserver((list) => {
+        for(const entry of list.getEntries()) {
+          console.log(entry)
+        }
+      })
+      observer.observe({entryTypes: ['longtask']})
+
+      document.addEventListener('visibilitychange',function(){ //浏览器切换事件
+          if(document.visibilityState=='hidden') { //状态判断
+              //normal_title=document.title;
+              document.title = '标题二';
+          }else {
+              document.title = '标题一';
+          }
+      });
+      
+      let connection = navigator.connection
+      let type = connection.effectiveType
+      connection.addEventListener('change',() => { // !网络环境变更
+        console.log('connection: from ' + type + ' to ' + connection.effectiveType)
+        type = connection.effectiveType
+      })
+    </script>
   </body>
 </html>
