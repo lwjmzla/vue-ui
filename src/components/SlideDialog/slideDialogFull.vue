@@ -1,7 +1,8 @@
 <template>
-  <div class="wrap" v-if="visible" @click="maskClick ? closeDialog(): ''">
-    <transition>
-      <div class="detail-dialog" v-if="show" :style="`width: ${width}`" @click.stop="doNoth">
+  <div v-if="show">
+    <div class="mask" v-show="animShow"></div>
+    <div class="dialog-wrap" @click="maskClick ? closeDialog(): ''">
+      <div class="detail-dialog" :class="animShow ? 'active-in' : 'active-out'" :style="`width: ${width}`" @click.stop="doNoth">
         <header>
           <span>{{ title }}</span>
           <i class="el-icon-close" @click="closeDialog"></i>
@@ -10,7 +11,7 @@
           <slot></slot>
         </div>
       </div>
-    </transition>
+    </div>
   </div>
 </template>
 
@@ -43,16 +44,22 @@
     watch: {
       visible: {
         handler(newVal) {
-          setTimeout(() => {
-            this.show = newVal;
-          }, 100);
-        },
-        immediate: true
+          // setTimeout(() => {
+          //   this.show = newVal;
+          // }, 100);
+          if (newVal) {
+            this.handleAnimShow();
+          } else {
+            this.handleAnimHide();
+          }
+        }
+        // immediate: true
       }
     },
     data() {
       return {
-        show: false
+        show: false,
+        animShow: false
       };
     },
     components: {
@@ -61,55 +68,74 @@
     methods: {
       doNoth() {},
       closeDialog() {
-        if (this.customClose) {
-          this.$emit('customCloseCallback');
-        } else {
-          this.$emit('update:visible', false);
-        }
+        // if (this.customClose) {
+        //   this.$emit('customCloseCallback');
+        // } else {
+        //   this.$emit('update:visible', false);
+        // }
+        this.$emit('update:visible', false);
+      },
+      onHide() {
+        this.show = false;
+      },
+      handleAnimHide() {
+        this.animShow = false;
+        setTimeout(() => {
+          this.onHide();
+        }, 300);
+      },
+      handleAnimShow() {
+        this.show = true;
+        setTimeout(() => {
+          this.animShow = true;
+        }, 200);
       }
     }
   };
 </script>
 
 <style lang='scss' scoped>
-    .v-enter-active,.v-leave-active {
-        transition:all 0.3s;
-    }
+.dialog-wrap,.mask{
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.mask{
+  background: rgba(0,0,0,0.7);
+}
+.detail-dialog{
+  position: absolute;
+  top: 0px;
+  right: 0;
+  width: 60%;
+  height: 100%;
+  background: #fff;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  transform: translate(100%, 0);
+  &.active-in{
+    transform: translate(0, 0);
+  }
+  &.active-out{
+    transform: translate(100%, 0);
+  }
+}
+.detail-dialog header{
+  padding: 0 20px;
+  height: 48px;
+  background: #F7F7F7;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .v-enter,.v-leave-to{
-        transform:translateX(100%);
-    }
-    .wrap{
-        position: fixed;
-        background: rgba(0,0,0,0.7);
-        z-index: 2000;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-    }
-    .detail-dialog{
-        position: absolute;
-        top: 0px;
-        right: 0;
-        width: 60%;
-        height: 100%;
-        background: #fff;
-        box-sizing: border-box;
-    }
-    .detail-dialog header{
-        padding: 0 20px;
-        height: 48px;
-        background: #F7F7F7;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .el-icon-close{
-        cursor: pointer;
-    }
-    .detail-b{
-        height: calc(100% - 48px);
-    }
+.el-icon-close{
+  cursor: pointer;
+}
+.detail-b{
+  height: calc(100% - 48px);
+}
 </style>
